@@ -25,7 +25,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotenv@v3
       with:
         dotnet-version: 8.0.x
 
@@ -57,7 +57,7 @@ jobs:
 
     steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotenv@v3
       with:
         dotnet-version: 8.0.x
 
@@ -72,7 +72,10 @@ jobs:
       run: |
         results=$(dotnet 2025.dll)
         echo "$results" > output.txt
-        echo "results=$results" >> $GITHUB_OUTPUT
+        # Only set output if results are in the expected format (key=value)
+        if [[ "$results" =~ ^[a-zA-Z0-9_]+=.*$ ]]; then
+          echo "$results" >> $GITHUB_OUTPUT
+        fi
 
     - name: Show output.txt in workflow log
       run: cat ./release/output.txt
