@@ -80,4 +80,6 @@ jobs:
     - name: Add output to workflow summary
       run: |
         echo '### Execution Output' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
         cat ./release/output.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
