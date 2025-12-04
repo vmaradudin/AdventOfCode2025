@@ -78,7 +78,7 @@ jobs:
       run: cat ./release/output.txt
 
     - name: Upload output artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: execution-output
         path: ./release/output.txt
