@@ -25,7 +25,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotenv@v3
       with:
         dotnet-version: 8.0.x
 
@@ -57,7 +57,7 @@ jobs:
 
     steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotenv@v3
       with:
         dotnet-version: 8.0.x
 
@@ -77,11 +77,7 @@ jobs:
           echo "$results" >> $GITHUB_OUTPUT
         fi
 
-    - name: Show output.txt in workflow log
-      run: cat ./release/output.txt
-
-    - name: Upload output artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: execution-output
-        path: ./release/output.txt
+    - name: Add output to workflow summary
+      run: |
+        echo '### Execution Output' >> $GITHUB_STEP_SUMMARY
+        cat ./release/output.txt >> $GITHUB_STEP_SUMMARY
