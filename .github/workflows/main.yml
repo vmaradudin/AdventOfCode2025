@@ -17,25 +17,33 @@ jobs:
 
     steps:    
     - uses: actions/checkout@v3
+
     - name: Clear cache
       continue-on-error: true
       run: gh cache delete Build
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
-      run: dotnet build --no-restore --configuration release
+      run: dotnet build --no-restore --configuration Release
+
     - name: Test
-      run: dotnet test --no-build --configuration release --verbosity normal --collect "Code Coverage"
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect "Code Coverage"
+
     - name: Copy release
       run: |
         find ./src/2025/bin/Release/net8.0/ -regex '.*\.(exe|pdb|xml)' -delete
-        mv ./src/2025/bin/Release/net8.0/ ./release/
+        mkdir -p ./release
+        mv ./src/2025/bin/Release/net8.0/* ./release/
+
     - name: Cache
       uses: actions/cache@v4
       with:
@@ -52,13 +60,25 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
+
     - name: Restore cache
       uses: actions/cache@v4
       with:
         key: Build
         path: ./release
+
     - name: Run
       working-directory: ./release
       run: |
-          results=$(dotnet 2025.dll)
-          echo "::set-output name=results::$results"
+        results=$(dotnet 2025.dll)
+        echo "$results" > output.txt
+        echo "results=$results" >> $GITHUB_OUTPUT
+
+    - name: Show output.txt in workflow log
+      run: cat ./release/output.txt
+
+    - name: Upload output artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: execution-output
+        path: ./release/output.txt
