@@ -83,3 +83,18 @@ jobs:
         echo '```' >> $GITHUB_STEP_SUMMARY
         cat ./release/output.txt >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
+    
+    - name: Generate badge SVG
+      working-directory: ./release
+      run: |
+        value=$(cat output.txt | head -n 1 | cut -d'=' -f2)
+        color="blue"
+        label="Result"
+        # Basic SVG badge generation
+        echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'><rect width='120' height='20' fill='$color'/><text x='10' y='15' fill='white' font-size='12'>$label: $value</text></svg>" > output-badge.svg
+
+    - name: Upload badge artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: output-badge
+        path: ./release/output-badge.svg
