@@ -43,6 +43,15 @@ jobs:
         find ./src/2025/bin/Release/net8.0/ -regex '.*\.(exe|pdb|xml)' -delete
         mkdir -p ./release
         mv ./src/2025/bin/Release/net8.0/* ./release/
+        last_file=$(ls ./src/2025/Modules/Day[0-9][0-9].fs | sort | tail -n 1)
+        if [[ -z "$last_file" ]]; then
+          echo "0" > ./release/lastDayNo
+        else
+          day=$(basename "$last_file" | grep -oP '\d{2}')
+          day_no=$((10#$day))
+          echo "$day_no" > ./release/lastDayNo
+        fi
+        
 
     - name: Cache
       uses: actions/cache@v4
@@ -70,10 +79,11 @@ jobs:
     - name: Retrieve AdventOfCode input
       working-directory: ./release
       run: |
-        mkdir -p ./src/2025/Inputs
-        for file in $(find ./src/2025/Modules -type f -name 'Day[0-9][0-9].fs'); do
-          day=$(basename "$file" | grep -oP '\d{2}')
-          curl -sSL -H "Cookie: ${{ secrets.AOC_GH_COOKIE }}" "https://adventofcode.com/2025/day/$((10#$day))/input" -o "./src/2025/Inputs/Input${day}.txt"
+        mkdir -p ./Inputs
+        last_day=$(cat ./lastDayNo)
+        for day in $(seq 1 $last_day); do
+        day_padded=$(printf "%02d" $day)
+        curl -sSL -H "Cookie: ${{ secrets.AOC_GH_COOKIE }}" "https://adventofcode.com/2025/day/$((10#$day))/input" -o "./Inputs/Input${day_padded}.txt"
         done
         
     - name: Run
