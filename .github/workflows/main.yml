@@ -68,13 +68,12 @@ jobs:
         path: ./release
         
     - name: Retrieve AdventOfCode input
-      env:
-        AOC_COOKIE: ${{ secrets.AOC_GH_COOKIE }}
+      working-directory: ./release
       run: |
-        mkdir -p ./release/input
+        mkdir -p ./src/2025/Inputs
         for file in $(find ./src/2025/Modules -type f -name 'Day[0-9][0-9].fs'); do
           day=$(basename "$file" | grep -oP '\d{2}')
-          curl -sSL -H "Cookie: ${{ secrets.AOC_GH_COOKIE }}" "https://adventofcode.com/2025/day/$((10#$day))/input" -o "./release/inputs/Input${day}.txt"
+          curl -sSL -H "Cookie: ${{ secrets.AOC_GH_COOKIE }}" "https://adventofcode.com/2025/day/$((10#$day))/input" -o "./src/2025/Inputs/Input${day}.txt"
         done
         
     - name: Run
