@@ -6,3 +6,4 @@ and experiments with GitHubActions
 [![Build & Test](https://github.com/vmaradudin/AdventOfCode2025/actions/workflows/main.yml/badge.svg)](https://github.com/vmaradudin/AdventOfCode2025/actions/workflows/main.yml)
 
 # Last run results
+[![Last Execution](https://vmaradudin.github.io/AdventOfCode2025-lastExecution.svg)](https://github.com/vmaradudin/AdventOfCode2025/actions/workflows/main.yml)
