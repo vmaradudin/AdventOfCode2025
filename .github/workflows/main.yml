@@ -110,4 +110,4 @@ jobs:
         cd temp-gh-pages
         git add AdventOfCode2025-lastExecution.svg
         git commit -m "Update AdventOfCode2025-lastExecution.svg from workflow"
-        git push origin main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vmaradudin/vmaradudin.github.io.git main
