@@ -87,7 +87,7 @@ jobs:
     - name: Generate SVG from output
       working-directory: ./release
       run: |
-        echo "<svg xmlns='http://www.w3.org/2000/svg'>" > output.svg
+        echo "<svg xmlns='http://www.w3.org/2000/svg' width=\"700\">" > output.svg
         echo "    <style>" >> output.svg
         echo "      text {" >> output.svg
         echo "        font-family: \"Cascadia Mono\", monospace;" >> output.svg
