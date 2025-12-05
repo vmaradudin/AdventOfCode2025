@@ -84,17 +84,30 @@ jobs:
         cat ./release/output.txt >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
     
-    - name: Generate badge SVG
+    - name: Generate SVG from output
       working-directory: ./release
       run: |
-        value=$(cat output.txt | head -n 1 | cut -d'=' -f2)
-        color="blue"
-        label="Result"
-        # Basic SVG badge generation
-        echo "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='20'><rect width='120' height='20' fill='$color'/><text x='10' y='15' fill='white' font-size='12'>$label: $value</text></svg>" > output-badge.svg
+        echo "<svg xmlns='http://www.w3.org/2000/svg'>" > output.svg
+        echo "    <style>" >> output.svg
+        echo "      text {" >> output.svg
+        echo "        font-family: \"Cascadia Mono\", monospace;" >> output.svg
+        echo "        font-size: 14px;" >> output.svg
+        echo "      }" >> output.svg
+        echo "    </style>" >> output.svg
+        echo "    <text fill='black' font-size='14'>" >> output.svg
+        while IFS= read -r line; do
+          echo "      <tspan x=\"10\" dy=\"1.4em\" xml:space='preserve'>${line}</tspan>" >> output.svg
+        done < output.txt
+        echo " </text>" >> output.svg
+        echo "</svg>" >> output.svg
 
-    - name: Upload badge artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: output-badge
-        path: ./release/output-badge.svg
+    - name: Commit SVG to github pages
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git clone --depth 1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vmaradudin/vmaradudin.github.io.git temp-gh-pages
+        cp ./release/output.svg temp-gh-pages/AdventOfCode2025-lastExecution.svg
+        cd temp-gh-pages
+        git add AdventOfCode2025-lastExecution.svg
+        git commit -m "Update AdventOfCode2025-lastExecution.svg from workflow"
+        git push origin main
