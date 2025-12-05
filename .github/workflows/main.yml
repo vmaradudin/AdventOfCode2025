@@ -76,7 +76,17 @@ jobs:
         if [[ "$results" =~ ^[a-zA-Z0-9_]+=.*$ ]]; then
           echo "$results" >> $GITHUB_OUTPUT
         fi
-
+        
+    - name: Retrieve AdventOfCode input
+      env:
+        AOC_COOKIE: ${{ secrets.AOC_GH_COOKIE }}
+      run: |
+        mkdir -p ./release/input
+        for file in $(find ./src/2025/Modules -type f -name 'Day[0-9][0-9].fs'); do
+          day=$(basename "$file" | grep -oP '\d{2}')
+          curl -sSL -H "Cookie: ${{ secrets.AOC_GH_COOKIE }}" "https://adventofcode.com/2025/day/$((10#$day))/input" -o "./release/inputs/Input${day}.txt"
+        done
+        
     - name: Add output to workflow summary
       run: |
         echo '### Execution Output' >> $GITHUB_STEP_SUMMARY
